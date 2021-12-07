@@ -1,0 +1,43 @@
+name: Heroku Deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+      - name: Install requirements
+        run: pip install -r requirements.txt
+        shell: bash
+      - name: Run tests
+        run: pytest
+        shell: bash
+
+  deploy_production:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: spacetravel-prod
+      url: "https://${{steps.step_set_url.outputs.BASE_URL}}.herokuapp.com"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Heroku deployment
+        uses: akhileshns/heroku-deploy@v3.12.12
+        with:
+          heroku_email: ${{secrets.HEROKU_EMAIL}}
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: ${{secrets.APP_NAME}}
+        env:
+          HD_SECRET: ${{secrets.SECRET}}
+          HD_BASE_URL: "https://${{secrets.APP_NAME}}.herokuapp.com"
+      - name: Set output url
+        id: step_set_url
+        run: echo '::set-output name=BASE_URL::https://${{secrets.APP_NAME}}.herokuapp.com'
+        shell: bash
