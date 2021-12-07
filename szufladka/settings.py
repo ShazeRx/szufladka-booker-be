@@ -18,7 +18,7 @@ is_heroku = os.environ.get('IS_HEROKU', False)
 
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [os.environ.get("BASE_URL", '127.0.0.1')]
 
 # Application definition
 
