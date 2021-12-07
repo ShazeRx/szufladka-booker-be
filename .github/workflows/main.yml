@@ -33,7 +33,7 @@ jobs:
           heroku_app_name: ${{secrets.APP_NAME}}
         env:
           HD_SECRET: ${{secrets.SECRET}}
-          HD_BASE_URL: "https://${{secrets.APP_NAME}}.herokuapp.com"
+          HD_BASE_URL: "${{secrets.APP_NAME}}.herokuapp.com"
           HD_IS_HEROKU: 1
       - name: Set output url
         id: step_set_url
