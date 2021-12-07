@@ -15,16 +15,13 @@ jobs:
       - name: Install requirements
         run: pip install -r requirements.txt
         shell: bash
-      - name: Run tests
-        run: pytest
-        shell: bash
 
   deploy_production:
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     environment:
-      name: spacetravel-prod
+      name: szufladka
       url: "https://${{steps.step_set_url.outputs.BASE_URL}}.herokuapp.com"
     steps:
       - uses: actions/checkout@v2
@@ -37,6 +34,7 @@ jobs:
         env:
           HD_SECRET: ${{secrets.SECRET}}
           HD_BASE_URL: "https://${{secrets.APP_NAME}}.herokuapp.com"
+          HD_IS_HEROKU: 1
       - name: Set output url
         id: step_set_url
         run: echo '::set-output name=BASE_URL::https://${{secrets.APP_NAME}}.herokuapp.com'
